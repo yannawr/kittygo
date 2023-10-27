@@ -5,7 +5,8 @@
 
 Installing Go packages can be a hassle sometimes for those who just want to quickly install packages and get going. Kittygo is a Bash script that serves as a straightforward workaround for those who want a headache-free experience when installing Go tools. Simply install them and get to work. 
 
-##How It Works
+## How It Works
+
 Kittygo utilizes `go install -v` for Go package installation and subsequently copies the resulting file from GOPATH to /usr/bin. It's as straightforward as that.
 
 Kittygo also provides the following functionalities:
