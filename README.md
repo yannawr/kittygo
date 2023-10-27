@@ -26,7 +26,7 @@ You have the option to set your pre-defined GOPATH as well.
 
 git clone this repository:
 ```
-git clone https://github.com/yannawr/kittygo && cd kittygo
+git clone https://github.com/yannawr/kittygo && cd kittygo && sudo chmod +x ./kittygo.sh
 ```
 
 No installation is necessary, but if you find it more convenient, you can use the following command:
@@ -36,8 +36,6 @@ No installation is necessary, but if you find it more convenient, you can use th
 ```
 
 This will copy the script to /usr/local/bin/ and create a configuration file. Then you can then delete the repository directory if you prefer.
-
-If you're running as a portable script though, make sure you have execute permissions.
 
 ### Installing a Go Package
 
@@ -107,6 +105,5 @@ sudo kittygo --remove-kittygo
 
 ## Notes
 
-- When running as `./kittygo.sh`, make sure the script has execute permissions.
 - kittygo uses a configuration file to manage the GOPATH. You can customize the configuration by editing the `config.conf` file.
 - Feel free to join in and contribute!
