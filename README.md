@@ -24,13 +24,20 @@ You have the option to set your pre-defined GOPATH as well.
 
 ### Installation
 
+git clone this repository:
+```
+git clone https://github.com/yannawr/kittygo && cd kittygo
+```
+
 No installation is necessary, but if you find it more convenient, you can use the following command:
 
 ```bash
 ./kittygo.sh --install-kittygo
 ```
 
-This will copy the script to /usr/local/bin/ and create a configuration file. If you're running as a portable script, make sure you have execute permissions.
+This will copy the script to /usr/local/bin/ and create a configuration file. Then you can then delete the repository directory if you prefer.
+
+If you're running as a portable script though, make sure you have execute permissions.
 
 ### Installing a Go Package
 
