@@ -18,7 +18,7 @@ You have the option to set your pre-defined GOPATH as well.
 ## Requirements
 
 1. Go version latest or >1.17.
-2. If running as portable, ensure this script has execute permissions. Use `chmod +x ./kittygo.sh` to grant permissions.
+2. That's all!
 
 ## Usage
 
@@ -32,7 +32,7 @@ git clone https://github.com/yannawr/kittygo && cd kittygo && sudo chmod +x ./ki
 No installation is necessary, but if you find it more convenient, you can use the following command:
 
 ```bash
-./kittygo.sh --install-kittygo
+sudo ./kittygo.sh --install-kittygo
 ```
 
 This will copy the script to /usr/local/bin/ and create a configuration file. Then you can then delete the repository directory if you prefer.
