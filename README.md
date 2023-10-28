@@ -76,35 +76,7 @@ sudo kittygo --remove anew
 To list the Go packages already installed, use the following command:
 
 ```bash
-kittygo -l
-```
-
-Example:
-
-```
-kittygo --list
-
-Searching for files.
-
-airixss
-amass
-assetfinder
-cariddi
-cf-check
-chaos
-dalfox
-filter-resolved
-freq
-gargs
-gau
-getJS
-gf
-goop
-gospider
-hakrawler
-packer
-waybackurls
-
+sudo kittygo -l
 ```
 
 ### Setting Custom GOPATH
