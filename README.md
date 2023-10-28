@@ -16,6 +16,8 @@ Kittygo also provides the following functionalities:
 
 You have the option to set your pre-defined GOPATH as well.
 
+This script is only a workaround, since you can change your GOPATH so there's no need to cp packages.
+
 ## Requirements
 
 1. Go version latest or >1.17.
