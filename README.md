@@ -3,7 +3,7 @@
 
 ## Description
 
-Installing Go packages can be a hassle sometimes for those who just want to quickly install packages and get going. Kittygo is a Bash script that serves as a straightforward workaround for those who want a headache-free experience when installing Go tools. Simply install them and get to work. 
+Installing Go packages can be a hassle sometimes for those who just want to quickly install packages and get going. Kittygo is a Bash script that serves as a straightforward workaround. Simply install them and get to work. 
 
 ## How It Works
 
@@ -15,6 +15,8 @@ Kittygo also provides the following functionalities:
 * Listing of installed Go packages
 
 You have the option to set your pre-defined GOPATH as well.
+
+This is a script for those who have trouble setting a GOPATH and just want to install the scripts without worrying too much about other issues, so it's a workaround.
 
 ## Requirements
 
