@@ -40,7 +40,8 @@ sudo ./kittygo.sh --install-kittygo
 
 This will copy the script to /usr/local/bin/ and create a configuration file. Then you can then delete the repository directory if you prefer.
 
-You may need to close the terminal and reopen it for the installed packages to be usable from the command line, or run `source ~/.bashrc`. If packages still doesn't work, it means you need to set the new GOPATH kittygo defined in the PATH as follows: `export PATH=$PATH:/usr/bin/go-packages/`.
+You may need to close the terminal and reopen it for the installed packages to be usable from the command line, or run `source ~/.bashrc`. 
+If packages still doesn't work, it means you need to set the new GOPATH kittygo defined in the PATH as follows: `export PATH=$PATH:/usr/bin/go-packages/`.
 
 ### Installing a Go Package
 
