@@ -7,7 +7,7 @@ Installing Go packages can be a hassle sometimes for those who just want to quic
 
 ## How It Works
 
-Kittygo utilizes `go install -v` for Go package installation and subsequently copies the resulting file from GOPATH to /usr/bin. It's as straightforward as that.
+Kittygo utilizes `go install -v` for Go package installation and subsequently moves the resulting file from GOPATH to /usr/bin/go-package It's as straightforward as that.
 
 Kittygo also provides the following functionalities:
 
@@ -16,7 +16,7 @@ Kittygo also provides the following functionalities:
 
 You have the option to set your pre-defined GOPATH as well.
 
-This is a script for those who have trouble setting a GOPATH and just want to install the scripts without worrying too much about other issues, so it's a workaround.
+This is a script for those who have trouble setting a GOPATH and just want to install Go packages without worrying too much about other issues, so it's a workaround.
 
 ## Requirements
 
@@ -39,6 +39,8 @@ sudo ./kittygo.sh --install-kittygo
 ```
 
 This will copy the script to /usr/local/bin/ and create a configuration file. Then you can then delete the repository directory if you prefer.
+
+You may need to close the terminal and reopen it for the installed packages to be usable from the command line, or run `source ~/.bashrc`. If packages still doesn't work, it means you need to set the new GOPATH kittygo defined in the PATH as follows: `export PATH=$PATH:/usr/bin/go-packages/`.
 
 ### Installing a Go Package
 
@@ -112,10 +114,14 @@ waybackurls
 You can set a custom GOPATH using the following command:
 
 ```bash
-sudo kittygo -p <your/go/path>
+sudo kittygo -p </your/go/path/>
 ```
 
-This won't change the GOPATH on your system, only in the kittygo settings.
+This won't change the GOPATH on your system, only in the kittygo settings. You must set the entire path and it must end with a "/" as in the example.
+
+```bash
+sudo kittygo -p /home/$USER/go/home/
+```
 
 ### Restoring Default GOPATH
 
@@ -133,8 +139,4 @@ If you want to remove kittygo, use the following command:
 ```bash
 sudo kittygo --remove-kittygo
 ```
-
-## Notes
-
-- kittygo uses a configuration file to manage the GOPATH. You can customize the configuration by editing the `config.conf` file.
-- Feel free to join in and contribute!
+That's it

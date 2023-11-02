@@ -8,13 +8,12 @@
 #                    ; ._.'     
 #                 `-'      
 # kittygo
-# Version: 2.0.0
+# Version: 3.0.0
 # Creation: 2023-10-26
 # Author: yannawr
 # Repository: github.com/yannawr/kittygo
 #
-# This script installs Go packages and copies the resulting binary to /usr/bin/
-# It also uninstalls Go packages by removing the files from Go path and /usr/bin/
+# This script installs Go packages and moves the resulting binary to /usr/bin/go-packages
 # 
 # Requirements:
 # 1. Go version latest or >1.17.
@@ -24,7 +23,7 @@
 script_dir=$(dirname "$0")
 
 default_go_path="/root/go/bin/"
-default_cp_path="/usr/bin/"
+kittygo_go="/usr/bin/go-packages/"
 kittygo_install="/usr/local/bin/"
 kittygo_installed="/usr/local/bin/kittygo"
 kittygo_conf_installation="/etc/kittygo/"
@@ -69,32 +68,24 @@ show_help() {
     echo ""
     echo "Options:"
     echo ""
-    echo "-d, --default-path                                   Restore Go path to /root/go/bin/."
-    echo "-h, --help                                           Display available commands."
+    echo "-d, --default-path                                   Restore GOPATH to /root/go/bin/."
+    echo "-h, --help                                           Print this help."
     echo "-i <repository_url>, --install <repository_url>      Install a Go package."
-    echo "-s, --install-kittygo                                Install kittygo."
+    echo "-I, --install-kittygo                                Install kittygo."
     echo "-l, --list                                           Display Go packages already installed."
-    echo "-p <your/go/path>, --path <your/go/path>             Set Go path."
+    echo "-p </your/go/path/>, --path </your/go/path/>             Set your GOPATH. Enter the entire path." 
+    echo "                                                     Example: /home/$USER/go/bin/." 
+    echo "                                                     Ensure it ends with /"
     echo "-r <tool_name>, --remove <tool_name>                 Remove a Go package."
-    echo "-u, --uninstall-kittygo                              Remove kittygo installation."
+    echo "-R, --remove-kittygo                                 Remove kittygo installation."
 }
 
 show_list() {
-    package_list=""
-    echo "Searching for files."
-    for file in "$default_cp_path"/*; do
-        if file "$file" | grep -q 'Go BuildID'; then
-            filename="${file##*/}"
-            package_list="$package_list$filename"$'\n'
-        fi
-    done
-    if [ -z "$package_list" ]; then
-    echo ""
+    if [ $(ls $kittygo_go | wc -l) -eq 0 ]; then
         echo "No installed packages found."
-        exit 0
+    else
+        ls $kittygo_go
     fi
-    echo ""
-    echo -e "$package_list"
 }
 
 install_kittygo() {
@@ -111,21 +102,56 @@ install_kittygo() {
         if [ ! -d "$kittygo_conf_installation" ]; then
             mkdir -p "$kittygo_conf_installation"
         fi
+        
         echo -e "# config.conf\nGOPATH=\"$default_go_path\"" > "$kittygo_conf_installed"
     fi
 
-    if [ -f "$kittygo_installed" ] && [ -x "$kittygo_installed" ] && [ -f "$kittygo_conf_installed" ]; then
+    if [ ! -d $kittygo_go ]; then
+        mkdir $kittygo_go
+    fi
+
+    if [ -f "$kittygo_installed" ] && [ -x "$kittygo_installed" ] && [ -f "$kittygo_conf_installed" ] && [ -d $kittygo_go ]; then
         colour success "kittygo has been successfully installed."
+        if ! grep -q "export PATH=\$PATH:$kittygo_go" /home/$SUDO_USER/.bashrc; then
+            echo "export PATH=\$PATH:$kittygo_go" >> /home/$SUDO_USER/.bashrc
+        fi
     else
         colour error "Error: kittygo was not successfully installed."
         remove_kittygo
+        exit 1
+    fi
+
+    if grep -q "export PATH=\$PATH:$kittygo_go" /home/$SUDO_USER/.bashrc; then
+        colour success "Path successfully added to ~/.bashrc."
+    else
+        colour error "Error: Path could not be set in ~/.bashrc. You need to manually add '$kittygo_go' to path."
     fi
 }
 
 remove_kittygo() {
     rm -r "$kittygo_installed"
     rm -r "$kittygo_conf_installation"
-    echo "kittygo has been successfully removed."
+    sed -i "\#export PATH=\$PATH:$kittygo_go#d" /home/$SUDO_USER/.bashrc
+
+    if grep -q 'export PATH=\$PATH:$kittygo_go' /home/$SUDO_USER/.bashrc; then
+        colour error "Error: The path could not be removed from ~/.bashrc."
+    fi
+
+    if [ -d $kittygo_go ]; then
+        echo "kittygo will not remove packages when uninstalling. If you want to uninstall go packages, delete the folder: $kittygo_go"
+    fi
+
+    if [ -f "$kittygo_conf_installed" ]; then
+        colour error "Error: config.conf is still in the directory."
+    fi
+  
+    if [ -f "$kittygo_instaled" ]; then
+        colour error "Error: kittygo could not be successfully removed."
+        exit 1
+    fi
+
+    echo "kittygo was successfully removed."
+
 }
 
 install_package() {
@@ -137,19 +163,12 @@ install_package() {
         exit 1
     fi
 
-    echo "Copying $GOPATH$repository_name to \"$default_cp_path\""
-    if cp "$GOPATH$repository_name" "$default_cp_path"/; then
-        colour success "Copy successful."
+    echo "Moving $GOPATH$repository_name to $kittygo_go"
+    if cp "$GOPATH$repository_name" "$kittygo_go"/; then
+        colour success "Package moved successfully."
     else
-        colour error "Copy Failed."
+        colour error "Package could not be moved."
         exit 1
-    fi
-
-    echo "Removing $GOPATH$repository_name"
-    if rm -r $GOPATH$repository_name; then
-        colour success "Removal successful."
-    else
-        colour error "Removal failed."
     fi
 
 }
@@ -214,7 +233,7 @@ if [ "$#" -eq 1 ]; then
         "--default-path" | "-d")
             restore_path
             ;;
-        "--install-kittygo" | "-s")
+        "--install-kittygo" | "-I")
             if [ -d "$kittygo_installed" ]; then
                 echo "kittygo is already installed."
                 exit 0
@@ -223,7 +242,7 @@ if [ "$#" -eq 1 ]; then
                 exit 0
             fi
             ;;
-        "--uninstall-kittygo" | "-u")
+        "--remove-kittygo" | "-R")
             if [ ! -f "$kittygo_installed" ] || [ ! -d "$kittygo_conf_installation" ]; then
                 echo "kittygo is not installed."
                 exit 0
@@ -253,7 +272,7 @@ if [ "$#" -eq 2 ]; then
         "--remove" | "-r")
             repository_name="$2"
 
-            usrbin_path="$default_cp_path$repository_name"
+            usrbin_path="$kittygo_go$repository_name"
 
             if [ ! -e "$usrbin_path" ]; then
                 echo "Package '$repository_name' was not found."
