@@ -165,7 +165,7 @@ install_package() {
     fi
 
     echo "Moving $GOPATH$repository_name to $kittygo_go"
-    if cp "$GOPATH$repository_name" "$kittygo_go"/; then
+    if mv "$GOPATH$repository_name" "$kittygo_go"/; then
         colour success "Package moved successfully."
     else
         colour error "Package could not be moved."
