@@ -289,8 +289,6 @@ if [ "$#" -eq 2 ]; then
             ;;
         "--path" | "-p")
             USER_GOPATH="$2"
-            echo "$USER_GOPATH"
-            echo "alo"
             set_GOPATH
             ;;
         *)
