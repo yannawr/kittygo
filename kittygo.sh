@@ -55,12 +55,12 @@ if [ "$0" == "$kittygo_installed" ]; then
         if [ ! -d "$kittygo_conf_installation" ]; then
             mkdir -p "$kittygo_conf_installation"
         fi
-        echo -e "# config.conf\nGOPATH=\"$default_go_path\"" > \"$kittygo_conf_installed\"
+        echo -e "# config.conf\nGO_PATH\"$default_go_path\"" > \"$kittygo_conf_installed\"
     fi
 elif [ -f "$script_dir/config.conf" ]; then
     source "$script_dir/config.conf"
 else
-    echo -e "# config.conf\nGOPATH=\"$default_go_path\"" > $script_dir/config.conf
+    echo -e "# config.conf\nGO_PATH\"$default_go_path\"" > $script_dir/config.conf
 fi
 
 show_help() {
@@ -68,12 +68,12 @@ show_help() {
     echo ""
     echo "Options:"
     echo ""
-    echo "-d, --default-path                                   Restore GOPATH to /root/go/bin/."
+    echo "-d, --default-path                                   Restore Go Path to /root/go/bin/."
     echo "-h, --help                                           Print this help."
     echo "-i <repository_url>, --install <repository_url>      Install a Go package."
     echo "-I, --install-kittygo                                Install kittygo."
     echo "-l, --list                                           Display Go packages already installed."
-    echo "-p </your/go/path/>, --path </your/go/path/>         Set your GOPATH. Enter the entire path." 
+    echo "-p </your/go/path/>, --path </your/go/path/>         Set your Go Path. Enter the entire path." 
     echo "                                                     Example: /home/$USER/go/bin/." 
     echo "                                                     Ensure it ends with /"
     echo "-r <tool_name>, --remove <tool_name>                 Remove a Go package."
@@ -104,7 +104,7 @@ install_kittygo() {
             mkdir -p "$kittygo_conf_installation"
         fi
         
-        echo -e "# config.conf\nGOPATH=\"$default_go_path\"" > "$kittygo_conf_installed"
+        echo -e "# config.conf\nGO_PATH\"$default_go_path\"" > "$kittygo_conf_installed"
     fi
 
     if [ ! -d $kittygo_go ]; then
@@ -164,8 +164,8 @@ install_package() {
         exit 1
     fi
 
-    echo "Moving $GOPATH$repository_name to $kittygo_go"
-    if mv "$GOPATH$repository_name" "$kittygo_go"/; then
+    echo "Moving $GO_PATH$repository_name to $kittygo_go"
+    if sudo mv "$GO_PATH$repository_name" "$kittygo_go"/; then
         colour success "Package moved successfully."
     else
         colour error "Package could not be moved."
@@ -187,12 +187,12 @@ remove_package() {
 
 restore_path() {
     if [ "$script_dir/" = "$kittygo_install" ]; then
-        if sed -i "s|^GOPATH=.*$|GOPATH=\"$default_go_path\"|" "$kittygo_conf_installed"; then
+        if sed -i "s|^GO_PATH=.*$|GO_PATH=\"$default_go_path\"|" "$kittygo_conf_installed"; then
             colour success "Go path restored to: $default_go_path"
             exit 0
         fi
     else
-        if sed -i "s|^GOPATH=.*$|GOPATH=\"$default_go_path\"|" "config.conf"; then
+        if sed -i "s|^GO_PATH=.*$|GO_PATH=\"$default_go_path\"|" "config.conf"; then
             colour success "Go path restored to: $default_go_path"
             exit 0
         fi 
@@ -205,12 +205,12 @@ restore_path() {
 
 set_GOPATH() {
     if [ "$script_dir/" = "$kittygo_install" ]; then
-        if sed -i "s|^GOPATH=.*$|GOPATH=\"$USER_GOPATH\"|" "$kittygo_conf_installed"; then
+        if sed -i "s|^GO_PATH=.*$|GO_PATH=\"$USER_GOPATH\"|" "$kittygo_conf_installed"; then
             colour success "Go path updated to: $USER_GOPATH. Ensure the path is correct or it may incur errors."
             exit 0
         fi
     else
-        if sed -i "s|^GOPATH=.*$|GOPATH=\"$USER_GOPATH\"|" "config.conf"; then
+        if sed -i "s|^GO_PATH=.*$|GO_PATH=\"$USER_GOPATH\"|" "config.conf"; then
             colour success "Go path updated to: $USER_GOPATH. Ensure the path is correct or it may incur errors."
             exit 0
         fi             
@@ -289,6 +289,8 @@ if [ "$#" -eq 2 ]; then
             ;;
         "--path" | "-p")
             USER_GOPATH="$2"
+            echo "$USER_GOPATH"
+            echo "alo"
             set_GOPATH
             ;;
         *)

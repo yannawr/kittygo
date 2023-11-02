@@ -47,7 +47,7 @@ You may need to close the terminal and reopen it for the installed packages to b
 To install a Go package, use the following command:
 
 ```bash
-sudo kittygo -i <repository_URL>
+kittygo -i <repository_URL>
 ```
 
 Replace `<repository_URL>` with the URL of the Go package you want to install.
@@ -55,8 +55,8 @@ Replace `<repository_URL>` with the URL of the Go package you want to install.
 Examples:
 
 ```bash
-sudo kittygo -i github.com/tomnomnom/anew@latest
-sudo kittygo -i https://github.com/tomnomnom/waybackurls
+kittygo -i github.com/tomnomnom/anew@latest
+kittygo -i https://github.com/tomnomnom/waybackurls
 ```
 
 ### Removing a Go Package
