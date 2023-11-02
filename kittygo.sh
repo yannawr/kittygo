@@ -73,7 +73,7 @@ show_help() {
     echo "-i <repository_url>, --install <repository_url>      Install a Go package."
     echo "-I, --install-kittygo                                Install kittygo."
     echo "-l, --list                                           Display Go packages already installed."
-    echo "-p </your/go/path/>, --path </your/go/path/>             Set your GOPATH. Enter the entire path." 
+    echo "-p </your/go/path/>, --path </your/go/path/>         Set your GOPATH. Enter the entire path." 
     echo "                                                     Example: /home/$USER/go/bin/." 
     echo "                                                     Ensure it ends with /"
     echo "-r <tool_name>, --remove <tool_name>                 Remove a Go package."
