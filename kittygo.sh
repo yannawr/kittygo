@@ -81,10 +81,11 @@ show_help() {
 }
 
 show_list() {
+
     if [ $(ls $kittygo_go | wc -l) -eq 0 ]; then
         echo "No installed packages found."
-    else
-        ls $kittygo_go
+    else       
+        ls -1 $kittygo_go
     fi
 }
 
