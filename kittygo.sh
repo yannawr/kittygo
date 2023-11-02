@@ -55,12 +55,12 @@ if [ "$0" == "$kittygo_installed" ]; then
         if [ ! -d "$kittygo_conf_installation" ]; then
             mkdir -p "$kittygo_conf_installation"
         fi
-        echo -e "# config.conf\nGO_PATH\"$default_go_path\"" > \"$kittygo_conf_installed\"
+        echo -e "# config.conf\nGO_PATH=\"$default_go_path\"" > \"$kittygo_conf_installed\"
     fi
 elif [ -f "$script_dir/config.conf" ]; then
     source "$script_dir/config.conf"
 else
-    echo -e "# config.conf\nGO_PATH\"$default_go_path\"" > $script_dir/config.conf
+    echo -e "# config.conf\nGO_PATH=\"$default_go_path\"" > $script_dir/config.conf
 fi
 
 show_help() {
@@ -104,7 +104,7 @@ install_kittygo() {
             mkdir -p "$kittygo_conf_installation"
         fi
         
-        echo -e "# config.conf\nGO_PATH\"$default_go_path\"" > "$kittygo_conf_installed"
+        echo -e "# config.conf\nGO_PATH=\"$default_go_path\"" > "$kittygo_conf_installed"
     fi
 
     if [ ! -d $kittygo_go ]; then
