@@ -8,7 +8,7 @@
 #                    ; ._.'     
 #                 `-'      
 # kittygo
-# Version: 3.0.0
+# Version: 3.1.0
 # Creation: 2023-10-26
 # Author: yannawr
 # Repository: github.com/yannawr/kittygo
