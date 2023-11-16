@@ -8,7 +8,7 @@
 #                    ; ._.'     
 #                 `-'      
 # kittygo
-# Version: 3.1.0
+# Version: 4.0.0
 # Creation: 2023-10-26
 # Author: yannawr
 # Repository: github.com/yannawr/kittygo
@@ -21,9 +21,8 @@
 
 
 script_dir=$(dirname "$0")
-
 default_go_path="/root/go/bin/"
-kittygo_go="/usr/bin/go-packages/"
+default_user_path="/usr/bin/go-packages/"
 kittygo_install="/usr/local/bin/"
 kittygo_installed="/usr/local/bin/kittygo"
 kittygo_conf_installation="/etc/kittygo/"
@@ -55,12 +54,13 @@ if [ "$0" == "$kittygo_installed" ]; then
         if [ ! -d "$kittygo_conf_installation" ]; then
             mkdir -p "$kittygo_conf_installation"
         fi
-        echo -e "# config.conf\nGO_PATH=\"$default_go_path\"" > \"$kittygo_conf_installed\"
+        echo -e "# config.conf\nGO_PATH=\"$default_go_path\"\nUSER_PATH=\"$default_user_path\"" > \"$kittygo_conf_installed\"
+
     fi
 elif [ -f "$script_dir/config.conf" ]; then
     source "$script_dir/config.conf"
 else
-    echo -e "# config.conf\nGO_PATH=\"$default_go_path\"" > $script_dir/config.conf
+    echo -e "# config.conf\nGO_PATH=\"$default_go_path\"\nUSER_PATH=\"$default_user_path\"" > $script_dir/config.conf
 fi
 
 show_help() {
@@ -68,12 +68,16 @@ show_help() {
     echo ""
     echo "Options:"
     echo ""
-    echo "-d, --default-path                                   Restore Go Path to /root/go/bin/."
+    echo "--default-go                                         Restore Go Path to /root/go/bin/."
+    echo "--default-user                                       Restore Go Path to /usr/bin/go-packages/."
     echo "-h, --help                                           Print this help."
     echo "-i <repository_url>, --install <repository_url>      Install a Go package."
     echo "-I, --install-kittygo                                Install kittygo."
     echo "-l, --list                                           Display Go packages already installed."
-    echo "-p </your/go/path/>, --path </your/go/path/>         Set your Go Path. Enter the entire path." 
+    echo "--set-gopath </your/go/path/>                        Set your Go Path. Enter the entire path." 
+    echo "                                                     Example: /home/$USER/go/bin/." 
+    echo "                                                     Ensure it ends with /"
+    echo "--set-userpath </your/user/path/>                    et your Go Path. Enter the entire path." 
     echo "                                                     Example: /home/$USER/go/bin/." 
     echo "                                                     Ensure it ends with /"
     echo "-r <tool_name>, --remove <tool_name>                 Remove a Go package."
@@ -82,10 +86,10 @@ show_help() {
 
 show_list() {
 
-    if [ $(ls $kittygo_go | wc -l) -eq 0 ]; then
+    if [ $(ls $USER_PATH | wc -l) -eq 0 ]; then
         echo "No installed packages found."
     else       
-        ls -1 $kittygo_go
+        ls -1 $USER_PATH
     fi
 }
 
@@ -107,39 +111,25 @@ install_kittygo() {
         echo -e "# config.conf\nGO_PATH=\"$default_go_path\"" > "$kittygo_conf_installed"
     fi
 
-    if [ ! -d $kittygo_go ]; then
-        mkdir $kittygo_go
+    if [ ! -d $USER_PATH ]; then
+        mkdir $USER_PATH
     fi
 
-    if [ -f "$kittygo_installed" ] && [ -x "$kittygo_installed" ] && [ -f "$kittygo_conf_installed" ] && [ -d $kittygo_go ]; then
+    if [ -f "$kittygo_installed" ] && [ -x "$kittygo_installed" ] && [ -f "$kittygo_conf_installed" ] && [ -d $USER_PATH ]; then
         colour success "kittygo has been successfully installed."
-        if ! grep -q "export PATH=\$PATH:$kittygo_go" /home/$SUDO_USER/.bashrc; then
-            echo "export PATH=\$PATH:$kittygo_go" >> /home/$SUDO_USER/.bashrc
-        fi
     else
         colour error "Error: kittygo was not successfully installed."
         remove_kittygo
         exit 1
-    fi
-
-    if grep -q "export PATH=\$PATH:$kittygo_go" /home/$SUDO_USER/.bashrc; then
-        colour success "Path successfully added to ~/.bashrc."
-    else
-        colour error "Error: Path could not be set in ~/.bashrc. You need to manually add '$kittygo_go' to path."
     fi
 }
 
 remove_kittygo() {
     rm -r "$kittygo_installed"
     rm -r "$kittygo_conf_installation"
-    sed -i "\#export PATH=\$PATH:$kittygo_go#d" /home/$SUDO_USER/.bashrc
 
-    if grep -q 'export PATH=\$PATH:$kittygo_go' /home/$SUDO_USER/.bashrc; then
-        colour error "Error: The path could not be removed from ~/.bashrc."
-    fi
-
-    if [ -d $kittygo_go ]; then
-        echo "kittygo will not remove packages when uninstalling. If you want to uninstall go packages, delete the folder: $kittygo_go"
+    if [ -d $USER_PATH ]; then
+        echo "kittygo will not remove packages when uninstalling. If you want to uninstall go packages, delete the folder: $USER_PATH"
     fi
 
     if [ -f "$kittygo_conf_installed" ]; then
@@ -164,8 +154,8 @@ install_package() {
         exit 1
     fi
 
-    echo "Moving $GO_PATH$repository_name to $kittygo_go"
-    if sudo mv "$GO_PATH$repository_name" "$kittygo_go"/; then
+    echo "Moving $GO_PATH$repository_name to $USER_PATH"
+    if sudo mv "$GO_PATH$repository_name" "$USER_PATH"/; then
         colour success "Package moved successfully."
     else
         colour error "Package could not be moved."
@@ -185,7 +175,7 @@ remove_package() {
 
 }
 
-restore_path() {
+restore_go_path() {
     if [ "$script_dir/" = "$kittygo_install" ]; then
         if sed -i "s|^GO_PATH=.*$|GO_PATH=\"$default_go_path\"|" "$kittygo_conf_installed"; then
             colour success "Go path restored to: $default_go_path"
@@ -194,6 +184,24 @@ restore_path() {
     else
         if sed -i "s|^GO_PATH=.*$|GO_PATH=\"$default_go_path\"|" "config.conf"; then
             colour success "Go path restored to: $default_go_path"
+            exit 0
+        fi 
+    fi
+
+    colour error "Error: Path could not be changed."
+    exit 1
+   
+}
+
+restore_user_path() {
+    if [ "$script_dir/" = "$kittygo_install" ]; then
+        if sed -i "s|^USER_PATH=.*$|USER_PATH=\"$default_user_path\"|" "$kittygo_conf_installed"; then
+            colour success "User path restored to: $default_user_path"
+            exit 0
+        fi
+    else
+        if sed -i "s|^USER_PATH=.*$|USER_PATH=\"$default_user_path\"|" "config.conf"; then
+            colour success "User path restored to: $default_user_path"
             exit 0
         fi 
     fi
@@ -219,6 +227,26 @@ set_GOPATH() {
     exit 1
 }
 
+set_USERPATH() {
+
+
+    if [ "$script_dir/" = "$kittygo_install" ]; then
+        if sed -i "s|^USER_PATH=.*$|USER_PATH=\"$USER_USERPATH\"|" "$kittygo_conf_installed"; then
+
+            colour success "User path updated to: $USER_USERPATH. Ensure the path is correct or it may incur errors. Remember to set the PATH environment variable in the ~/.bashrc file or another shell."
+            exit 0
+        fi
+    else
+        if sed -i "s|^USER_PATH=.*$|USER_PATH=\"$USER_USERPATH\"|" "config.conf"; then
+
+            colour success "User path updated to: $USER_USERPATH. Ensure the path is correct or it may incur errors. Remember to set the PATH environment variable in the ~/.bashrc file or another shell."
+            exit 0
+        fi             
+    fi
+    colour error "Error: Path could not be changed."
+    exit 1
+}
+
 ##################################
 
 if [ "$#" -eq 1 ]; then
@@ -231,8 +259,11 @@ if [ "$#" -eq 1 ]; then
             show_list
             exit 0
             ;;
-        "--default-path" | "-d")
-            restore_path
+        "--default-go")
+            restore_go_path
+            ;;
+        "--default-user")
+            restore_user_path
             ;;
         "--install-kittygo" | "-I")
             if [ -d "$kittygo_installed" ]; then
@@ -273,7 +304,7 @@ if [ "$#" -eq 2 ]; then
         "--remove" | "-r")
             repository_name="$2"
 
-            usrbin_path="$kittygo_go$repository_name"
+            usrbin_path="$USER_PATH$repository_name"
 
             if [ ! -e "$usrbin_path" ]; then
                 echo "Package '$repository_name' was not found."
@@ -287,9 +318,13 @@ if [ "$#" -eq 2 ]; then
             remove_package
             exit 0
             ;;
-        "--path" | "-p")
+        "--set-gopath")
             USER_GOPATH="$2"
             set_GOPATH
+            ;;
+        "--set-userpath")
+            USER_USERPATH="$2"
+            set_USERPATH
             ;;
         *)
             echo "Invalid argument usage. Please See --help."
