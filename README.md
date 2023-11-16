@@ -3,11 +3,11 @@
 
 ## Description
 
-Installing Go packages can be a hassle sometimes for those who just want to quickly install packages and get going. Kittygo is a Bash script that serves as a straightforward workaround. Simply install them and get to work. 
+Kittygo is a Bash script that serves as a straightforward workaround for installing Go packages in the directory you specify.
 
 ## How It Works
 
-Kittygo utilizes `go install -v` for Go package installation and subsequently moves the resulting file from GOPATH to /usr/bin/go-package It's as straightforward as that.
+Kittygo utilizes `go install -v` for Go package installation and subsequently moves the resulting file from GOPATH to /usr/bin/go-packages or to the directory you specify. It's as straightforward as that.
 
 Kittygo also provides the following functionalities:
 
@@ -31,6 +31,9 @@ git clone this repository:
 ```
 git clone https://github.com/yannawr/kittygo && cd kittygo && sudo chmod +x ./kittygo.sh
 ```
+Set the PATH to `/usr/bin/go-packages/` in your shell.
+You may need to close the terminal and reopen it for the installed packages to be usable from the command line, or run `source ~/.bashrc`. 
+If packages still doesn't work, it means you need to set the USERPATH kittygo defined as follows: `export PATH=$PATH:/usr/bin/go-packages/`.
 
 No installation is necessary, but if you find it more convenient, you can use the following command:
 
@@ -38,10 +41,7 @@ No installation is necessary, but if you find it more convenient, you can use th
 sudo ./kittygo.sh --install-kittygo
 ```
 
-This will copy the script to /usr/local/bin/ and create a configuration file. Then you can then delete the repository directory if you prefer.
-
-You may need to close the terminal and reopen it for the installed packages to be usable from the command line, or run `source ~/.bashrc`. 
-If packages still doesn't work, it means you need to set the new GOPATH kittygo defined in the PATH as follows: `export PATH=$PATH:/usr/bin/go-packages/`.
+This will copy the script to /usr/local/bin/ (default) and create a configuration file. Then you can delete the repository directory if you prefer.
 
 ### Installing a Go Package
 
@@ -110,28 +110,25 @@ waybackurls
 
 ```
 
-### Setting Custom GOPATH
+### Setting Custom GOPATH and USERPATH
 
 You can set a custom GOPATH using the following command:
 
 ```bash
-sudo kittygo -p </your/go/path/>
+sudo kittygo --set-gopath </your/go/path/>
 ```
-
 This won't change the GOPATH on your system, only in the kittygo settings. You must set the entire path and it must end with a "/" as in the example.
 
 ```bash
-sudo kittygo -p /home/$USER/go/home/
+sudo kittygo --set-gopath /home/$USER/go/home/
 ```
 
-### Restoring Default GOPATH
-
-If you want to restore the default GOPATH to `/root/go/bin`, use the following command:
+USERPATH is the new location you want packages to be installed. You can set a custom USERPATH using the following command:
 
 ```bash
-sudo kittygo -d
+sudo kittygo --set-userpath </your/userpath/path/>
 ```
-This won't change the GOPATH on your system, only in the kittygo settings.
+You also must set the entire path and it must end with a "/" as in the example.
 
 ### Removing kittygo
 
